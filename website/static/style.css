@@ -4,3 +4,20 @@
     background-color: #f8d7da;
     border-color: #f5c6cb;
 }
+
+#header{
+    background-color: #0e273c;
+}
+
+body{
+    background-color: #fff9fb;
+}
+form{
+    background-color: #d3d4d9;
+    padding: 2rem;
+    border-radius: 5px;
+}
+
+footer{
+    background-color: #0e273c;
+}

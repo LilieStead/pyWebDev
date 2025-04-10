@@ -1,3 +1,6 @@
 cd C:\Users\lilie\source\repos\pyWebDev
 press enter then add
 .venv\scripts\activate.bat
+
+
+pip install requests beautifulsoup4

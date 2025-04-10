@@ -21,3 +21,8 @@ form{
 footer{
     background-color: #0e273c;
 }
+
+.btn-primary{
+    background-color: #4C956C !important;
+    border: #407e5b !important;
+}

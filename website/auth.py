@@ -10,16 +10,16 @@ auth = Blueprint('auth', __name__)
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
-        password = request.form.get('password')  # Fixed to match login.html form field
+        password = request.form.get('password')
 
-        if not email or not password:  # Ensure fields are not empty
+        if not email or not password:
             flash('Please fill in both fields.', category='danger')
             return render_template("login.html")
 
         user = User.query.filter_by(email=email).first()
 
         if user:
-            if check_password_hash(user.password, password):  # Password check
+            if check_password_hash(user.password, password):
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
                 return redirect(url_for('views.home'))
@@ -28,24 +28,23 @@ def login():
         else:
             flash('User does not exist', category='danger')
 
-    return render_template("login.html")
-
+    return render_template("login.html", user=current_user)
 
 @auth.route('/logout')
 @login_required
 def logout():
-    logout_user
+    logout_user()
     return redirect(url_for('auth.login'))
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'POST':  # Check if the form is submitted
+    if request.method == 'POST':
         email = request.form.get('email')
-        first_name = request.form.get('firstName')  # Fixed variable name to snake_case
+        first_name = request.form.get('firstName')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
 
-        user = User.query.filter_by(email=email).first()  # Fixed incorrect assignment
+        user = User.query.filter_by(email=email).first()
 
         if user:
             flash('User already exists', category='danger')
@@ -63,8 +62,8 @@ def signup():
             new_user = User(email=email, first_Name=first_name, password=hashed_password)
             db.session.add(new_user)
             db.session.commit()
-            login_user(user, remember=True)
+            login_user(new_user, remember=True)
             flash('Your account has been created!', category='success')
             return redirect(url_for('views.home'))
 
-    return render_template("signup.html")
+    return render_template("signup.html", user=current_user)

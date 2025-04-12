@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User
-from . import db  # Import db instance from __init__.py
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user, current_user
+from flask_login import login_user, logout_user, login_required, current_user
+from .models import db, User
 
 auth = Blueprint('auth', __name__)
 
+# Login route
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -30,12 +30,14 @@ def login():
 
     return render_template("login.html", user=current_user)
 
+# Logout route
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
+# Signup route
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':

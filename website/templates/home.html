@@ -2,5 +2,15 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>This is the Home page</h1>
+<div style="height: 5vh;"></div>
+<form method="POST" class="container mt-4">
+    <h3 class="text-center">Amazon Link Tracker</h3>
+    
+    <div class="form-group">
+        <label for="link">Amazon Link</label>
+        <input type="url" class="form-control" id="link" name="link" placeholder="Enter link" required>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary btn-block">Look Up link</button>
+</form>
 {% endblock%}

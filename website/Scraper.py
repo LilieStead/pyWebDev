@@ -61,7 +61,7 @@ def get_amazon_product_details(url):
         "description": description,
     }
 
-# Example usage
-url = "https://www.amazon.co.uk/dp/B07VYZY4B2/ref=sspa_dk_detail_0?pd_rd_i=B07VYZY4B2&pd_rd_w=gQkzb&content-id=amzn1.sym.b0e623ee-d52c-45f6-bb59-f1032539acce&pf_rd_p=b0e623ee-d52c-45f6-bb59-f1032539acce&pf_rd_r=4KFDAZ1PWQ79DEG93KC4&pd_rd_wg=vcZgw&pd_rd_r=a6638269-88cb-4689-b789-6c3cbbfcb750&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWxfdGhlbWF0aWM&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUExTFk5UVowSDRWRUVWJmVuY3J5cHRlZElkPUExMDA5NzgxMVlQNFFIN1EwSE1aMiZlbmNyeXB0ZWRBZElkPUEwNDkwNTY2MjNGWUwzRjhHSlNBMCZ3aWRnZXROYW1lPXNwX2RldGFpbF90aGVtYXRpYyZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU&th=1"  # Replace with any Amazon product URL
-details = get_amazon_product_details(url)
-print(details)
+# Testing
+# url = "https://www.amazon.co.uk/dp/B07VYZY4B2/ref=sspa_dk_detail_0?pd_rd_i=B07VYZY4B2&pd_rd_w=gQkzb&content-id=amzn1.sym.b0e623ee-d52c-45f6-bb59-f1032539acce&pf_rd_p=b0e623ee-d52c-45f6-bb59-f1032539acce&pf_rd_r=4KFDAZ1PWQ79DEG93KC4&pd_rd_wg=vcZgw&pd_rd_r=a6638269-88cb-4689-b789-6c3cbbfcb750&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWxfdGhlbWF0aWM&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUExTFk5UVowSDRWRUVWJmVuY3J5cHRlZElkPUExMDA5NzgxMVlQNFFIN1EwSE1aMiZlbmNyeXB0ZWRBZElkPUEwNDkwNTY2MjNGWUwzRjhHSlNBMCZ3aWRnZXROYW1lPXNwX2RldGFpbF90aGVtYXRpYyZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU&th=1"  # Replace with any Amazon product URL
+# details = get_amazon_product_details(url)
+# print(details)

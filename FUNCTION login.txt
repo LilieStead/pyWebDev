@@ -1,0 +1,10 @@
+FUNCTION login
+	IF REQUEST IS 'POST'
+		SET email TO REQUEST.FORM.GET('email')
+		SET password TO REQUEST.FORM.GET('password')
+
+
+		IF NOT email OR password:
+			SEND FLASK('Please fill in both fields.' Category='danger')
+			RETURN  RENDER_TEMPLATE ('login.html)
+		SET user TO User QUERY FILTER BY email FIRST

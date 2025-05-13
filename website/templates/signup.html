@@ -3,7 +3,7 @@
 
 {% block content %}
 <div style="height: 5vh;"></div>
-<form method="POST" class="container mt-4">
+<form method="POST" class="container mt-4" id="signupform" onsubmit="signupVal(event)">
     <h3 class="text-center">Sign-Up</h3>
     
 
@@ -12,25 +12,32 @@
 
     <div class="form-group">
         <label for="email">Email</label>
-        <input type="text" class="form-control" id="email" name="email" placeholder="Enter email" required>
+        <input type="text" class="form-control" id="email" name="email" placeholder="Enter email">
+        <span id="emailerror" class="text-danger font-weight-bold small"></span>
     </div>
 
     <div class="form-group">
         <label for="firstName">First Name</label>
-        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter first name" required>
+        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter first name">
+        <span id="firstnameerror" class="text-danger font-weight-bold small"></span>
     </div>
 
     <div class="form-group">
         <label for="password1">Password</label>
-        <input type="password" class="form-control" id="password1" name="password1" placeholder="Enter password" required>
+        <input type="password" class="form-control" id="password1" name="password1" placeholder="Enter password">
+        <span id="passworderror" class="text-danger font-weight-bold small"></span>
     </div>
 
     <div class="form-group">
         <label for="password2">Confirm Password</label>
-        <input type="password" class="form-control" id="password2" name="password2" placeholder="Re-enter password" required>
+        <input type="password" class="form-control" id="password2" name="password2" placeholder="Re-enter password">
+        <span id="password2error" class="text-danger font-weight-bold small"></span>
     </div>
 
     <br>
     <button type="submit" class="btn btn-primary btn-block">Submit</button>
 </form>
+
+<script src="{{ url_for('static', filename='js/signupVal.js') }}"></script>
+
 {% endblock%}

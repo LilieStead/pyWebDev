@@ -33,6 +33,9 @@ function signupVal(event) {
     } else if (password.length > 15) {
         document.getElementById("passworderror").innerHTML = "Password too long (Max: 15)";
         pass = false;
+    } else if(password.length < 7){
+        document.getElementById("passworderror").innerHTML = "Password too long (Min: 7)";
+        pass = false;
     }
 
     // First name validation (Fixed)

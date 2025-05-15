@@ -3,12 +3,14 @@ from flask_login import login_required, current_user
 from website.scraper import get_amazon_product_details
 from .models import db, Product, User  # ✅ Import User
 import re
+from sqlalchemy.sql.expression import func
 
 views = Blueprint('views', __name__)
 
 @views.route('/')
 def landing():
-    return render_template("landing.html", user=current_user)
+        random_products = Product.query.order_by(func.random()).limit(10).all()
+        return render_template("landing.html", user=current_user, products=random_products)
 
 @views.route('/home', methods=['GET', 'POST'])
 @login_required

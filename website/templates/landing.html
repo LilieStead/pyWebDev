@@ -2,7 +2,6 @@
 {% block title %}Landing Page{% endblock %}
 
 {% block content %}
-<h1>Recently added items</h1>
 <div class="container mt-4" id="itemcontainer">
     <h1 class="text-center mb-4">Recently Added Items</h1>
     {% for product in products %}
@@ -10,8 +9,21 @@
         <div class="card-body">
             <h5 class="card-title">{{ product.title[:45] }}{% if product.title|length > 45 %}...{% endif %}</h5>
             <p class="card-text">{{ product.description[:350] }}{% if product.description|length > 350 %}...{% endif %}</p>
-            <p class="text-muted">Current Price: <strong>${{ product.price }}</strong></p>
-            <p class="text-muted">Last Price: <strong>${{ product.last_price }}</strong></p>
+
+            {% set price = product.price|float %}
+            {% set last_price = product.last_price|float %}
+            {% set price_change = ((price - last_price) / last_price * 100) if last_price else 0 %}
+            
+            <p class="text-muted">
+                Current Price: <strong>£{{ price }}</strong>
+                {% if price > last_price %}
+                    <span class="text-danger">&#9650; {{ "%.2f"|format(price_change) }}%</span>
+                {% elif price < last_price %}
+                    <span class="text-success">&#9660; {{ "%.2f"|format(price_change) }}%</span>
+                {% endif %}
+            </p>
+            <p class="text-muted">Last Price: <strong>£{{ last_price }}</strong></p>
+
             <a href="{{ product.link }}" class="btn btn-primary btn-sm">View Product</a>
             <button class="btn btn-warning btn-sm" onclick="updatePrice({{ product.id }})">Update Price</button>
             <button class="btn btn-success btn-sm" onclick="addToAccount({{ product.id }})">Add to Account</button>

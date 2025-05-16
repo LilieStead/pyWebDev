@@ -42,31 +42,29 @@ footer{
 /* From Uiverse.io by scissorsdog */ 
 .loader__balls {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
   gap: 15px;
 }
 .loader__balls__group {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  position: relative;
-  height: 100px;
-  width: 40px;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+    height: 100px;
+    width: 40px;
+
 }
 .ball {
-  height: 30px;
   width: 30px;
-  border-radius: 15px;
-  position: absolute;
-  transform-origin: bottom;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    transform-origin: bottom;
 }
 
 /* ANIMATION BALL 1*/
 .loader__balls__group :nth-child(1) {
-  background-color: #99e2d0;
+  background-color: #3485c6;
   animation-name: jumpinBallAnimation1;
   animation-duration: 1000ms;
   animation-iteration-count: infinite;
@@ -113,7 +111,7 @@ footer{
 
 /* ANIMATION BALL 2*/
 .loader__balls__group :nth-child(2) {
-  background-color: #12e0ad;
+  background-color: #1b486d;
   animation-name: jumpinBallAnimation2;
   animation-duration: 1000ms;
   animation-iteration-count: infinite;
@@ -160,11 +158,19 @@ footer{
 
 .loader {
     position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%);
+
+}
+
+#loadingcontainer{
+ position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.921); /* Dark semi-transparent overlay */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -172,10 +178,9 @@ footer{
 
 }
 
-
 /* ANIMATION BALL 3*/
 .loader__balls__group :nth-child(3) {
-  background-color: #16c197;
+  background-color: #0e273c;
   animation-name: jumpinBallAnimation3;
   animation-duration: 1000ms;
   animation-iteration-count: infinite;

@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- ✅ Load jQuery first -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- ✅ Then load Bootstrap's JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="stylesheet" href="https://code.jquery.com/jquery-3.6.0.min.js"> <!-- ✅ jQuery Loaded FIRST -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
               integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
               crossorigin="anonymous"/>
@@ -14,23 +20,25 @@
 
     <body>
 
-        <!-- ✅ Loading animation with ID -->
-        <div class="loader" id="loading-animation" style="display: none;">
-            <div class="loader__balls">
-                <div class="loader__balls__group">
-                    <div class="ball item1"></div>
-                    <div class="ball item1"></div>
-                    <div class="ball item1"></div>
-                </div>
-                <div class="loader__balls__group">
-                    <div class="ball item2"></div>
-                    <div class="ball item2"></div>
-                    <div class="ball item2"></div>
-                </div>
-                <div class="loader__balls__group">
-                    <div class="ball item3"></div>
-                    <div class="ball item3"></div>
-                    <div class="ball item3"></div>
+        <!-- ✅ Loading container (covers full screen) -->
+        <div id="loadingcontainer" style="display: none;">
+            <div class="loader">
+                <div class="loader__balls">
+                    <div class="loader__balls__group">
+                        <div class="ball item1"></div>
+                        <div class="ball item1"></div>
+                        <div class="ball item1"></div>
+                    </div>
+                    <div class="loader__balls__group">
+                        <div class="ball item2"></div>
+                        <div class="ball item2"></div>
+                        <div class="ball item2"></div>
+                    </div>
+                    <div class="loader__balls__group">
+                        <div class="ball item3"></div>
+                        <div class="ball item3"></div>
+                        <div class="ball item3"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -42,60 +50,56 @@
             <div class="collapse navbar-collapse" id="navbar">
                 <div class="navbar-nav">
                     {% if user.is_authenticated %}
-                    <a class="nav-item nav-link" id="home" href="/home">Home</a>
+                    <a class="nav-item nav-link" id="Landingpage" href="/">Suggestions</a>
+                    <a class="nav-item nav-link" id="home" href="/">Home</a>
                     <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
                     {% else %}
-                    <a class="nav-item nav-link" id="home" href="/">Home</a>
+                    <a class="nav-item nav-link" id="home" href="/">Suggestions</a>
                     <a class="nav-item nav-link" id="login" href="/login">Login</a>
                     <a class="nav-item nav-link" id="signUp" href="/signup">Sign Up</a>
                     {% endif %}
                 </div>
             </div>
         </nav>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mt-3">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
 
         <div class="container" style="height: 100vh">
             {% block content %}{% endblock %}
         </div>
 
-        <!-- JavaScript to show/hide loader -->
+        <!-- ✅ JavaScript to show/hide loader -->
         <script>
-    window.onload = function() {
-        // Show loader on page load
-        document.getElementById("loading-animation").style.display = "block";
+            // Show the loading container before the page starts unloading (e.g., on form submit or link click)
+            window.addEventListener("beforeunload", function () {
+                document.getElementById("loadingcontainer").style.display = "block";
+            });
 
-        // Hide loader after 3.5 seconds
-        setTimeout(function() {
-            document.getElementById("loading-animation").style.display = "none";
-        }, 3500); // 3500ms = 3.5 seconds
-
-        // Show loader when a request starts (POST, PUT, etc.)
-        $(document).ajaxStart(function() {
-            $("#loading-animation").fadeIn();
-        }).ajaxStop(function() {
-            $("#loading-animation").fadeOut();
-        });
-       };
-    </script>
-
-    <script>
-    $(document).ready(function() {
-        $(document).ajaxSend(function(event, xhr, settings) {
-            if (settings.type === "POST" || settings.type === "PUT" || settings.type === "GET" ||settings.type === "DELETE") {
-                $("#loading-animation").fadeIn();
-            }
-        });
-
-        $(document).ajaxComplete(function(event, xhr, settings) {
-            if (settings.type === "POST" || settings.type === "PUT" || settings.type === "GET" ||settings.type === "DELETE") {
-                $("#loading-animation").fadeOut();
-            }
-          });
-        });
-      </script>
+            // Optional: Hide it again on load (in case it's cached, or you do SPA-style navigation later)
+            window.addEventListener("load", function () {
+                document.getElementById("loadingcontainer").style.display = "none";
+            });
+        </script>
 
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <footer class="text-white text-center py-3 fixed-bottom">
+            <p>&copy; <span id="year"></span> Amazon Scraper.</p>
+        </footer>
+
+        <script src="{{ url_for('static', filename='js/year.js') }}"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
     </body>
 </html>

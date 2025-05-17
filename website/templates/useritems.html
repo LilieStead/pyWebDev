@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Landing Page{% endblock %}
-
-{% block content %}
-<div class="container mt-4" id="itemcontainer">
-    <h1 class="text-center mb-4">Recently Added Items</h1>
+    <div class="container mt-4" id="itemcontainer">
+<h1 class="text-center mb-4">{{ user_name }}'s Items</h1>
     {% for product in products %}
     <div class="card shadow-sm mb-3">
         <div class="card-body">
@@ -39,3 +37,4 @@
 
 
 {% endblock %}
+{% block content %}

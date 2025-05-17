@@ -1,9 +1,8 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 from .models import db, User
 import re
-
 
 auth = Blueprint('auth', __name__)
 
@@ -11,10 +10,10 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email').strip()
-        password = request.form.get('password').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
 
-        # Correctly indented email format validation
+        # Validate email format
         email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
         if not re.match(email_regex, email):
             flash('Invalid email format. Please enter a valid email.', category='danger')
@@ -28,8 +27,11 @@ def login():
 
         if user:
             if check_password_hash(user.password, password):
-                flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
+                session['user_id'] = user.id
+                session['user_email'] = user.email
+                session['first_name'] = user.first_Name
+                flash('Logged in successfully!', category='success')
                 return redirect(url_for('views.home'))
             else:
                 flash('Password is incorrect, please try again!', category='danger')
@@ -43,23 +45,26 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('successfully logged out', category='success')
+    session.pop('user_id', None)
+    session.pop('user_email', None)
+    session.pop('first_name', None)
+    flash('Successfully logged out', category='success')
     return redirect(url_for('auth.login'))
 
 # Signup route
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        email = request.form.get('email')
-        first_name = request.form.get('firstName')
-        password1 = request.form.get('password1')
-        password2 = request.form.get('password2')
+        email = request.form.get('email', '').strip()
+        first_name = request.form.get('firstName', '').strip()
+        password1 = request.form.get('password1', '')
+        password2 = request.form.get('password2', '')
 
+        # Validate email format
         email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
         if not re.match(email_regex, email):
             flash('Invalid email format. Please enter a valid email.', category='danger')
             return render_template("signup.html", user=current_user)
-
 
         user = User.query.filter_by(email=email).first()
 
@@ -75,12 +80,31 @@ def signup():
             flash('Your password needs to be at least 7 characters.', category='danger')
         else:
             hashed_password = generate_password_hash(password1, method='pbkdf2:sha256')
-
             new_user = User(email=email, first_Name=first_name, password=hashed_password)
+
             db.session.add(new_user)
             db.session.commit()
+
             login_user(new_user, remember=True)
+            session['user_id'] = new_user.id
+            session['user_email'] = new_user.email
+            session['first_name'] = new_user.first_Name
             flash('Your account has been created!', category='success')
             return redirect(url_for('views.home'))
 
     return render_template("signup.html", user=current_user)
+
+
+@auth.route('/show_name/<int:user_id>')
+@login_required
+def show_name(user_id):
+    name = get_user_name_by_id(user_id)
+    if name:
+        return f"User's name is: {name}"
+    else:
+        return "User not found"
+    
+    
+@auth.route('/usersitems', methods=['GET', 'POST'])
+def load_items():
+    return render_template("useritems.html", user=current_user)

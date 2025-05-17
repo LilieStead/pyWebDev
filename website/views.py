@@ -1,16 +1,83 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from website.scraper import get_amazon_product_details
-from .models import db, Product, User  # ✅ Import User
+from .models import db, Product, User 
 import re
 from sqlalchemy.sql.expression import func
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+
+
 
 views = Blueprint('views', __name__)
 
+
+@views.route('/refresh_product/<int:product_id>')
+@login_required
+def refresh_product(product_id):
+    product = Product.query.get_or_404(product_id)
+
+    result = get_amazon_product_details(product.link)
+    if result == "notfound":
+        flash("Failed to update: Amazon data could not be retrieved.", category='error')
+        return redirect(url_for('views.home'))
+
+    new_price = result.get("price", "").strip()
+
+    # Only update price if it is different
+    if new_price != product.price:
+        # Move current price to last_price BEFORE updating price
+        product.last_price = product.price
+        product.price = new_price
+
+    # Update title and description no matter what
+    product.title = result.get("title", product.title)
+    product.description = result.get("description", product.description)
+
+    try:
+        db.session.commit()
+        flash("Product info updated successfully.", category='success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Database error: {str(e)}", category='error')
+
+    return redirect(url_for('views.home'))
+
+@views.route('/add_product/<int:product_id>')
+@login_required
+def add_product(product_id):
+    product = Product.query.get_or_404(product_id)
+
+    print("Current user ID:", current_user.id)
+    print("Product ID:", product.id)
+
+    if product in current_user.products:
+        print("Product already linked to user")
+        flash("Product already in your account.", category='info')
+    else:
+        print("Linking product to user...")
+        current_user.products.append(product)
+        try:
+            db.session.commit()
+            flash("Product added to your account successfully.", category='success')
+            print("Commit successful.")
+        except Exception as e:
+            db.session.rollback()
+            print("DB error:", str(e))
+            flash(f"Database error: {str(e)}", category='error')
+
+    previous_page = request.referrer
+    if previous_page:
+        return redirect(previous_page)
+    else:
+        # fallback if no referrer header is present
+        return redirect(url_for('views.landing'))
+
 @views.route('/')
 def landing():
-        random_products = Product.query.order_by(func.random()).limit(10).all()
-        return render_template("landing.html", user=current_user, products=random_products)
+    random_products = Product.query.order_by(func.random()).limit(10).all()
+    added_products = session.get('added_products', [])
+
+    return render_template("landing.html", user=current_user, products=random_products, added_products=added_products)
 
 @views.route('/home', methods=['GET', 'POST'])
 @login_required

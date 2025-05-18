@@ -11,7 +11,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 views = Blueprint('views', __name__)
 
 
-@views.route('/refresh_product/<int:product_id>')
+@views.route('/refresh_product/<int:product_id>', methods=['GET', 'POST'])
 @login_required
 def refresh_product(product_id):
     product = Product.query.get_or_404(product_id)
@@ -23,13 +23,10 @@ def refresh_product(product_id):
 
     new_price = result.get("price", "").strip()
 
-    # Only update price if it is different
     if new_price != product.price:
-        # Move current price to last_price BEFORE updating price
         product.last_price = product.price
         product.price = new_price
 
-    # Update title and description no matter what
     product.title = result.get("title", product.title)
     product.description = result.get("description", product.description)
 
@@ -40,37 +37,34 @@ def refresh_product(product_id):
         db.session.rollback()
         flash(f"Database error: {str(e)}", category='error')
 
-    return redirect(url_for('views.home'))
+    return redirect(request.args.get("next") or url_for('views.home'))
 
-@views.route('/add_product/<int:product_id>')
+
+@views.route('/add_product/<int:product_id>', methods=['POST'])
 @login_required
 def add_product(product_id):
     product = Product.query.get_or_404(product_id)
 
-    print("Current user ID:", current_user.id)
-    print("Product ID:", product.id)
-
     if product in current_user.products:
-        print("Product already linked to user")
         flash("Product already in your account.", category='info')
     else:
-        print("Linking product to user...")
         current_user.products.append(product)
         try:
             db.session.commit()
             flash("Product added to your account successfully.", category='success')
-            print("Commit successful.")
         except Exception as e:
             db.session.rollback()
-            print("DB error:", str(e))
             flash(f"Database error: {str(e)}", category='error')
 
+    # Redirect back to the previous page or home
     previous_page = request.referrer
     if previous_page:
         return redirect(previous_page)
     else:
-        # fallback if no referrer header is present
         return redirect(url_for('views.landing'))
+
+
+
 
 @views.route('/')
 def landing():

@@ -3,6 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 from .models import db, User
 import re
+from .models import db, User, Product  # ← make sure Product is included
+
 
 auth = Blueprint('auth', __name__)
 
@@ -105,6 +107,25 @@ def show_name(user_id):
         return "User not found"
     
     
+
 @auth.route('/usersitems', methods=['GET', 'POST'])
+@login_required
 def load_items():
-    return render_template("useritems.html", user=current_user)
+    user_name = current_user.first_Name
+    user_products = current_user.products  # This will retrieve all associated products
+    return render_template("useritems.html", user=current_user, user_name=user_name, products=user_products)
+
+
+@auth.route('/remove_product/<int:product_id>', methods=['POST'])
+@login_required
+def remove_product(product_id):
+    product = Product.query.get_or_404(product_id)
+
+    if product in current_user.products:
+        current_user.products.remove(product)
+        db.session.commit()
+        flash('Product removed from your account.', category='success')
+    else:
+        flash('Product not found in your account.', category='warning')
+
+    return redirect(url_for('auth.load_items'))

@@ -24,12 +24,22 @@
             </p>
             <p class="text-muted">Last Price: <strong>£{{ last_price }}</strong></p>
 
-            <a href="{{ product.link }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">View Product</a>
+            <div class="d-flex flex-column justify-evenly flex-sm-row align-items-start align-sm-center gap-2">
+                <form action="{{ product.link }}" method="GET" target="_blank" class="productoptions">
+                    <button type="submit" class="btn btn-primary btn-sm">View Product</button>
+                </form>
+                {% if user.is_authenticated %}
+                    <form action="{{ url_for('views.refresh_product', product_id=product.id, next=request.path) }}" method="POST" class="productoptions">
+                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                    </form>
+                    <form action="{{ url_for('views.add_product', product_id=product.id) }}" method="POST" class="productoptions">
+                        <button type="submit" class="btn btn-primary btn-sm">Add Product</button>
+                    </form>
+                {% endif %}
+            </div>
+    
 
-            {% if user.is_authenticated %}
-                <a href="{{ url_for('views.refresh_product', product_id=product.id, next=request.path) }}" class="btn btn-primary">Refresh Product Info</a>
-                <a href="{{ url_for('views.add_product', product_id=product.id) }}" class="btn btn-success btn-sm">Add to Account</a>
-            {% endif %}
+            
         </div>
     </div>
     {% endfor %}

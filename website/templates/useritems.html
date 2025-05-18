@@ -1,40 +1,49 @@
 {% extends "base.html" %}
-{% block title %}Landing Page{% endblock %}
-    <div class="container mt-4" id="itemcontainer">
-<h1 class="text-center mb-4">{{ user_name }}'s Items</h1>
-    {% for product in products %}
-    <div class="card shadow-sm mb-3">
-        <div class="card-body">
-            <h5 class="card-title">{{ product.title[:45] }}{% if product.title|length > 45 %}...{% endif %}</h5>
-            <p class="card-text">{{ product.description[:350] }}{% if product.description|length > 350 %}...{% endif %}</p>
+{% block title %}My Items{% endblock %}
 
-            {% set price = product.price|float %}
-            {% set last_price = product.last_price|float %}
-            {% set price_change = ((price - last_price) / last_price * 100) if last_price else 0 %}
-            
-            <p class="text-muted">
-                Current Price: <strong>£{{ price }}</strong>
-                {% if price > last_price %}
-                    <span class="text-danger">&#9650; {{ "%.2f"|format(price_change) }}%</span>
-                {% elif price < last_price %}
-                    <span class="text-success">&#9660; {{ "%.2f"|format(price_change) }}%</span>
-                {% endif %}
-            </p>
-            <p class="text-muted">Last Price: <strong>£{{ last_price }}</strong></p>
-
-            <a href="{{ product.link }}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">View Product</a>
-
-            {% if user.is_authenticated %}
-                <a href="{{ url_for('views.refresh_product', product_id=product.id, next=request.path) }}" class="btn btn-primary">Refresh Product Info</a>
-                <a href="{{ url_for('views.add_product', product_id=product.id) }}" class="btn btn-success btn-sm">Add to Account</a>
-            {% endif %}
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-
-
-
-{% endblock %}
 {% block content %}
+<h1 class="text-center mb-4">{{ user_name }}'s Items</h1>
+
+{% for product in products %}
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <h5 class="card-title">{{ product.title[:45] }}{% if product.title|length > 45 %}...{% endif %}</h5>
+        <p class="card-text">{{ product.description[:350] }}{% if product.description|length > 350 %}...{% endif %}</p>
+
+        {% set price = product.price|float %}
+        {% set last_price = product.last_price|float %}
+        {% set price_change = ((price - last_price) / last_price * 100) if last_price else 0 %}
+        
+        <p class="text-muted">
+            Current Price: <strong>£{{ price }}</strong>
+            {% if price > last_price %}
+                <span class="text-danger">&#9650; {{ "%.2f"|format(price_change) }}%</span>
+            {% elif price < last_price %}
+                <span class="text-success">&#9660; {{ "%.2f"|format(price_change) }}%</span>
+            {% endif %}
+        </p>
+        <p class="text-muted">Last Price: <strong>£{{ last_price }}</strong></p>
+
+        <!-- options -->
+       <div class="d-flex flex-column justify-evenly flex-sm-row align-items-start align-sm-center gap-2">
+            <form action="{{ product.link }}" method="GET" target="_blank" class="productoptions">
+                <button type="submit" class="btn btn-primary btn-sm">View Product</button>
+            </form>
+
+            <form action="{{ url_for('views.refresh_product', product_id=product.id, next=request.path) }}" method="POST" class="productoptions">
+                <button type="submit" class="btn btn-primary btn-sm">Update</button>
+            </form>
+
+            <form action="{{ url_for('auth.remove_product', product_id=product.id) }}" method="POST" class="productoptions">
+                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endfor %}
+
+{% if not products %}
+<p class="text-center">You have no saved products.</p>
+{% endif %}
+{% endblock %}

@@ -1,6 +1,5 @@
 # pyWebDev
-
-
+use py 3.12 no higher
 
 Install lines - 
 pip install flask 

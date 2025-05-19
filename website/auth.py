@@ -1,16 +1,17 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
-from .models import db, User
+from .models import db, User, Product
 import re
-from .models import db, User, Product  # ← make sure Product is included
-
 
 auth = Blueprint('auth', __name__)
 
 # Login route
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('views.home'))  # Redirect logged-in users
+
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '').strip()
@@ -56,6 +57,9 @@ def logout():
 # Signup route
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('views.home'))  # Redirect logged-in users
+
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
         first_name = request.form.get('firstName', '').strip()
@@ -105,8 +109,7 @@ def show_name(user_id):
         return f"User's name is: {name}"
     else:
         return "User not found"
-    
-    
+
 
 @auth.route('/usersitems', methods=['GET', 'POST'])
 @login_required
@@ -129,3 +132,63 @@ def remove_product(product_id):
         flash('Product not found in your account.', category='warning')
 
     return redirect(url_for('auth.load_items'))
+
+
+
+
+
+
+
+@auth.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        new_email = request.form.get('email', '').strip()
+        new_first_name = request.form.get('firstName', '').strip()
+        password1 = request.form.get('password1', '')
+        password2 = request.form.get('password2', '')
+
+        email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+
+        # Validate email format
+        if not re.match(email_regex, new_email):
+            flash('Invalid email format. Please enter a valid email.', category='danger')
+            return render_template('profile.html', user=current_user)
+
+        # Validate first name length
+        if len(new_first_name) < 2:
+            flash('First name must be greater than 1 character.', category='danger')
+            return render_template('profile.html', user=current_user)
+
+        # Check if the new email is already used by another user
+        user_with_email = User.query.filter_by(email=new_email).first()
+        if user_with_email and user_with_email.id != current_user.id:
+            flash('Email is already in use by another account.', category='danger')
+            return render_template('profile.html', user=current_user)
+
+        # Only update password if provided
+        if password1 or password2:
+            if password1 != password2:
+                flash('Passwords do not match.', category='danger')
+                return render_template('profile.html', user=current_user)
+            if len(password1) < 7:
+                flash('Password needs to be at least 7 characters.', category='danger')
+                return render_template('profile.html', user=current_user)
+            current_user.password = generate_password_hash(password1, method='pbkdf2:sha256')
+
+        # Update the name and email regardless
+        current_user.first_Name = new_first_name
+        current_user.email = new_email
+
+        db.session.commit()
+
+        # Update session info
+        session['user_email'] = new_email
+        session['first_name'] = new_first_name
+
+        flash('Profile updated successfully!', category='success')
+        return redirect(url_for('auth.profile'))
+
+    # GET request - render the profile form with current user info
+    return render_template('profile.html', user=current_user)
+

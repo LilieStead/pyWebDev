@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Log-in{% endblock %}
+
+{% block content %}
+<div style="height: 5vh;"></div>
+    <form method="POST" class="container mt-4" id="profileform" onsubmit="editVal(event)">
+    <h3 class="text-center mb-4">Edit Profile</h3>
+
+    <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input 
+            type="text" 
+            class="form-control" 
+            id="firstName" 
+            name="firstName" 
+            placeholder="Enter first name" 
+            value="{{ user.first_Name }}">
+        <span id="firstNameerror" class="text-danger font-weight-bold small"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+            type="email" 
+            class="form-control" 
+            id="email" 
+            name="email" 
+            placeholder="Enter email" 
+            value="{{ user.email }}">
+        <span id="emailerror" class="text-danger font-weight-bold small"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="password1">New Password <small class="text-muted">(leave blank to keep current)</small></label>
+        <input 
+            type="password" 
+            class="form-control" 
+            id="password1" 
+            name="password1" 
+            placeholder="Enter new password">
+        <span id="password1error" class="text-danger font-weight-bold small"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="password2">Confirm New Password</label>
+        <input 
+            type="password" 
+            class="form-control" 
+            id="password2" 
+            name="password2" 
+            placeholder="Confirm new password">
+        <span id="password2error" class="text-danger font-weight-bold small"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">Update Profile</button>
+</form>
+
+</div>
+<script src="{{ url_for('static', filename='js/editVal.js') }}"></script>
+{% endblock%}

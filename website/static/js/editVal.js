@@ -17,8 +17,8 @@ function editVal(event) {
     if (firstName.length === 0) {
         document.getElementById("firstNameerror").textContent = "First name cannot be empty.";
         pass = false;
-    } else if (firstName.length < 2) {
-        document.getElementById("firstNameerror").textContent = "First name is too short (Min 2 characters)";
+    } else if (firstName.length < 3) {
+        document.getElementById("firstNameerror").textContent = "First name is too short (Min 3 characters)";
         pass = false;
     } else if (firstName.length > 30) {
         document.getElementById("firstNameerror").textContent = "First name is too long (Max 30 characters)";

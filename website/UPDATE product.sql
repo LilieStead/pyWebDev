@@ -1,4 +1,4 @@
 UPDATE product
-SET last_price = '100', 
-    price = '200'
-WHERE id = 1;
+SET last_price = '50', 
+    price = '100'
+WHERE id = 2;
